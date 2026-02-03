@@ -1,0 +1,134 @@
+:root {
+    --color-body-bg: #e6e6e6;
+    --color-container-bg: #ffffff;
+    --color-popup-border: #918cfa90;
+    --color-popup-grad-1: #f8d5edf0;
+    --color-popup-grad-2: #fffffff0;
+    --color-popup-grad-3: #dbddfff0;
+    --color-text: #ffffff;
+    --color-text-dark: #6668b3;
+    --font-ui: Helvetica, Arial, sans-serif;
+    --font-size-title: 15px;
+    --font-size-text: 16px;
+    --window-width: 380px;
+    --window-height: 280px;
+}
+
+body {
+    background-color: var(--color-body-bg);
+}
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    background-color: var(--color-container-bg);
+    position: relative;
+}
+
+.lottie-wrap {
+    width: 100%;
+    height: auto;
+    margin: 40px auto;
+}
+
+.lottie-popup {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+        opacity 200ms ease,
+        visibility 200ms ease;
+}
+
+.lottie-popup.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: none;
+}
+
+.lottie-popup__inner {
+    width: var(--window-width);
+    height: var(--window-height);
+    border: 1px solid var(--color-popup-border);
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--color-popup-grad-1), var(--color-popup-grad-3));
+}
+
+.lottie-popup__text {
+    position: absolute;
+    inset: 0;
+    width: var(--window-width);
+    height: var(--window-height);
+    display: none;
+    pointer-events: none;
+}
+
+.lottie-popup__video {
+    position: absolute;
+    inset: 0;
+    width: var(--window-width);
+    height: var(--window-height);
+    display: none;
+    border: 1px solid var(--color-popup-border);
+    border-radius: 10px;
+    background: #000000;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+.lottie-popup__text.is-visible {
+    display: block;
+}
+
+.lottie-popup__text-item {
+    position: absolute;
+    font-family: var(--font-ui);
+    font-size: var(--font-size-title);
+    color: var(--color-text);
+    text-align: center;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+}
+
+.lottie-popup__text-block {
+    font-family: var(--font-ui);
+    font-size: var(--font-size-text);
+    line-height: 1.35;
+    color: var(--color-text-dark);
+    text-align: left;
+    padding: 24px;
+    width: 100%;
+    height: auto;
+    box-sizing: border-box;
+    white-space: normal;
+    text-wrap: balance;
+}
+
+.lottie-popup.has-text .lottie-popup__inner {
+    display: none;
+}
+
+.lottie-popup.has-text .lottie-popup__text {
+    position: relative;
+    inset: auto;
+    width: var(--window-width);
+    height: auto;
+    border: 1px solid var(--color-popup-border);
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--color-popup-grad-1), var(--color-popup-grad-3));
+}
+
+.lottie-popup.has-video .lottie-popup__text {
+    display: none;
+}
+
+.lottie-popup.has-video .lottie-popup__inner {
+    display: none;
+}
+
+.lottie-popup.has-video .lottie-popup__video {
+    display: block;
+}
