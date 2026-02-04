@@ -12,6 +12,7 @@ const popup = document.getElementById('popup');
 const popupText = document.getElementById('popup-text');
 const popupInner = document.getElementById('popup-lottie');
 const popupVideo = document.getElementById('popup-video');
+const popupClose = document.querySelector('.lottie-popup__close');
 
 const WINDOW_4_LABELS = [
     { key: 'partners', text: 'Partners', x: 200, y: 84.239, compW: 400, compH: 300 },
@@ -107,6 +108,11 @@ const hidePopupText = () => {
 
 const updatePopupPosition = (event) => {
     if (!event) return;
+    if (window.matchMedia('(max-width: 768px)').matches) {
+        popup.style.left = '50%';
+        popup.style.top = '50%';
+        return;
+    }
     const container = document.querySelector('.container');
     if (!container) return;
     const rect = container.getBoundingClientRect();
@@ -149,6 +155,45 @@ const getLayerElement = (anim, layerName) => {
     return match.layerElement || match.baseElement || match.element || match;
 };
 
+const handleLayerActivate = (layerName, event) => {
+    if (layerName === 'circles-hover-4') {
+        loadPopupAnimation('json/window-4.json');
+        showPopupLabels(WINDOW_4_LABELS);
+    } else if (layerName === 'circles-hover-3') {
+        loadPopupAnimation('json/window-3.json');
+        hidePopupText();
+    } else if (layerName === 'circles-hover-2') {
+        loadPopupAnimation('json/window-2.json');
+        hidePopupText();
+    } else if (layerName === 'circles-hover-8') {
+        loadPopupAnimation('');
+        showPopupParagraph(
+            'Web3 investing made simple: We streamline the entire experience, providing access to yield farming, staking, airdrops, and private sales with zero technical expertise required. All you need to do is trust in our experience. Settle in and relish the journey!',
+        );
+    } else if (layerName === 'circles-hover-6') {
+        loadPopupAnimation('');
+        showPopupParagraph(
+            "Forget about complicated setups and technical hurdles. We handle the entire process for you, harnessing artificial intelligence to automate and optimize your Web3 investments. Our goal is to provide you with passive income through minimal effort on your part.\n\nNodspace analyzes a vast array of factors—including current yields, risks, and market trends—continuously adjusting the portfolio to achieve optimal results. Your assets work efficiently, even when you aren't monitoring the process.",
+        );
+    } else if (layerName === 'circles-hover-5') {
+        loadPopupAnimation('');
+        showPopupParagraph(
+            'We empower you to enter the Web3 world in a secure and hassle-free way, allowing you to earn from the most promising blockchain technologies. Unlike many complex and confusing solutions, our platform serves as your reliable bridge between traditional finance and decentralized opportunities.',
+        );
+    } else if (layerName === 'circles-hover-1') {
+        loadPopupAnimation('');
+        showPopupVideo('video/window-1.mp4');
+    } else if (layerName === 'circles-hover-7') {
+        loadPopupAnimation('');
+        showPopupVideo('video/window-7.mp4');
+    } else {
+        loadPopupAnimation('');
+        hidePopupText();
+    }
+    updatePopupPosition(event);
+    showPopup();
+};
+
 mainAnim.addEventListener('DOMLoaded', () => {
     const svgEl = document.querySelector('#lottie svg');
     if (svgEl) {
@@ -173,44 +218,16 @@ mainAnim.addEventListener('DOMLoaded', () => {
         layer.style.pointerEvents = 'all';
         layer.setAttribute('pointer-events', 'all');
         layer.addEventListener('mouseover', (event) => {
-            if (layerName === 'circles-hover-4') {
-                loadPopupAnimation('json/window-4.json');
-                showPopupLabels(WINDOW_4_LABELS);
-            } else if (layerName === 'circles-hover-3') {
-                loadPopupAnimation('json/window-3.json');
-                hidePopupText();
-            } else if (layerName === 'circles-hover-2') {
-                loadPopupAnimation('json/window-2.json');
-                hidePopupText();
-            } else if (layerName === 'circles-hover-8') {
-                loadPopupAnimation('');
-                showPopupParagraph(
-                    'Web3 investing made simple: We streamline the entire experience, providing access to yield farming, staking, airdrops, and private sales with zero technical expertise required. All you need to do is trust in our experience. Settle in and relish the journey!',
-                );
-            } else if (layerName === 'circles-hover-6') {
-                loadPopupAnimation('');
-                showPopupParagraph(
-                    "Forget about complicated setups and technical hurdles. We handle the entire process for you, harnessing artificial intelligence to automate and optimize your Web3 investments. Our goal is to provide you with passive income through minimal effort on your part.\n\nNodspace analyzes a vast array of factors—including current yields, risks, and market trends—continuously adjusting the portfolio to achieve optimal results. Your assets work efficiently, even when you aren't monitoring the process.",
-                );
-            } else if (layerName === 'circles-hover-5') {
-                loadPopupAnimation('');
-                showPopupParagraph(
-                    'We empower you to enter the Web3 world in a secure and hassle-free way, allowing you to earn from the most promising blockchain technologies. Unlike many complex and confusing solutions, our platform serves as your reliable bridge between traditional finance and decentralized opportunities.',
-                );
-            } else if (layerName === 'circles-hover-1') {
-                loadPopupAnimation('');
-                showPopupVideo('video/window-1.mp4');
-            } else if (layerName === 'circles-hover-7') {
-                loadPopupAnimation('');
-                showPopupVideo('video/window-7.mp4');
-            } else {
-                loadPopupAnimation('');
-                hidePopupText();
-            }
-            updatePopupPosition(event);
-            showPopup();
+            handleLayerActivate(layerName, event);
+        });
+        layer.addEventListener('click', (event) => {
+            handleLayerActivate(layerName, event);
         });
         layer.addEventListener('mousemove', updatePopupPosition);
         layer.addEventListener('mouseout', hidePopup);
     });
 });
+
+if (popupClose) {
+    popupClose.addEventListener('click', hidePopup);
+}

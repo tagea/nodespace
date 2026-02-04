@@ -41,6 +41,10 @@ body {
     transition:
         opacity 200ms ease,
         visibility 200ms ease;
+    &.has-video {
+        width: var(--window-width);
+        height: var(--window-height);
+    }
 }
 
 .lottie-popup.is-visible {
@@ -77,6 +81,51 @@ body {
     background: #000000;
     object-fit: cover;
     pointer-events: none;
+}
+
+.lottie-popup__close {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    z-index: 5;
+    display: none;
+    border: 0;
+    border-radius: 8px;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    background-color: transparent;
+
+    color: transparent;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.lottie-popup__close:focus-visible {
+    outline: 2px solid #2b2d5a;
+    outline-offset: 2px;
+}
+
+.lottie-popup__close::before,
+.lottie-popup__close::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 26px;
+    height: 2px;
+    background-color: var(--color-text-dark);
+    border-radius: 2px;
+    opacity: 0.7;
+    transform-origin: center;
+}
+
+.lottie-popup__close::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lottie-popup__close::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 .lottie-popup__text.is-visible {
@@ -131,4 +180,27 @@ body {
 
 .lottie-popup.has-video .lottie-popup__video {
     display: block;
+}
+
+@media (max-width: 991.98px) {
+    :root {
+        --window-width: min(92vw, 380px);
+        --window-height: min(70vh, 320px);
+        --font-size-title: 14px;
+        --font-size-text: 15px;
+    }
+
+    .lottie-popup.is-visible {
+        pointer-events: auto;
+    }
+
+    .lottie-popup__close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .lottie-popup__text-block {
+        padding: 20px;
+    }
 }
