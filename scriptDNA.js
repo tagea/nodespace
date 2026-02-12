@@ -12,6 +12,8 @@ const popup = document.getElementById('popup');
 const popupText = document.getElementById('popup-text');
 const popupInner = document.getElementById('popup-lottie');
 const popupVideo = document.getElementById('popup-video');
+const popupLottieLoader = document.getElementById('popup-lottie-loader');
+const popupVideoLoader = document.getElementById('popup-video-loader');
 const popupClose = document.querySelector('.lottie-popup__close');
 
 const WINDOW_4_LABELS = [
@@ -23,8 +25,19 @@ const popupContainer = document.getElementById('popup-lottie');
 let popupAnim = null;
 let currentPopupPath = null;
 
+const setLoaderVisible = (loader, isVisible) => {
+    if (!loader) return;
+    loader.classList.toggle('is-visible', Boolean(isVisible));
+};
+
+const hideAllLoaders = () => {
+    setLoaderVisible(popupLottieLoader, false);
+    setLoaderVisible(popupVideoLoader, false);
+};
+
 const loadPopupAnimation = (path) => {
     if (!popupContainer) return;
+    setLoaderVisible(popupLottieLoader, Boolean(path));
     if (currentPopupPath === path && popupAnim) return;
     if (popupAnim) {
         popupAnim.destroy();
@@ -32,6 +45,7 @@ const loadPopupAnimation = (path) => {
     }
     popupContainer.innerHTML = '';
     currentPopupPath = path;
+    if (!path) return;
     popupAnim = lottie.loadAnimation({
         container: popupContainer,
         renderer: 'svg',
@@ -39,6 +53,9 @@ const loadPopupAnimation = (path) => {
         autoplay: false,
         path,
     });
+    const hideLottieLoader = () => setLoaderVisible(popupLottieLoader, false);
+    popupAnim.addEventListener('DOMLoaded', hideLottieLoader);
+    popupAnim.addEventListener('data_failed', hideLottieLoader);
 };
 
 const showPopup = () => {
@@ -50,6 +67,8 @@ const showPopup = () => {
 
 const showPopupLabels = (labels) => {
     if (!popupText || !popupInner) return;
+    hidePopupVideo();
+    setLoaderVisible(popupVideoLoader, false);
     const rect = popupInner.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     popupText.innerHTML = '';
@@ -71,6 +90,8 @@ const showPopupLabels = (labels) => {
 
 const showPopupParagraph = (text) => {
     if (!popupText) return;
+    hidePopupVideo();
+    hideAllLoaders();
     popupText.innerHTML = '';
     const block = document.createElement('div');
     block.className = 'lottie-popup__text-block';
@@ -83,9 +104,11 @@ const showPopupParagraph = (text) => {
 
 const showPopupVideo = (src) => {
     if (!popupVideo) return;
+    setLoaderVisible(popupVideoLoader, Boolean(src));
     popupVideo.src = src || '';
     popupVideo.currentTime = 0;
     popupVideo.play().catch(() => {});
+    setLoaderVisible(popupLottieLoader, false);
     popup.classList.add('has-video');
     popup.classList.remove('has-text');
 };
@@ -95,11 +118,13 @@ const hidePopupVideo = () => {
     popupVideo.pause();
     popupVideo.removeAttribute('src');
     popupVideo.load();
+    setLoaderVisible(popupVideoLoader, false);
     popup.classList.remove('has-video');
 };
 
 const hidePopupText = () => {
     if (!popupText) return;
+    hideAllLoaders();
     popupText.innerHTML = '';
     popupText.classList.remove('is-visible');
     popup.classList.remove('has-text');
@@ -230,4 +255,12 @@ mainAnim.addEventListener('DOMLoaded', () => {
 
 if (popupClose) {
     popupClose.addEventListener('click', hidePopup);
+}
+
+if (popupVideo) {
+    const hideVideoLoader = () => setLoaderVisible(popupVideoLoader, false);
+    popupVideo.addEventListener('loadeddata', hideVideoLoader);
+    popupVideo.addEventListener('canplay', hideVideoLoader);
+    popupVideo.addEventListener('playing', hideVideoLoader);
+    popupVideo.addEventListener('error', hideVideoLoader);
 }
