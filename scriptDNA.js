@@ -18,8 +18,13 @@ const popupClose = document.querySelector('.lottie-popup__close');
 
 const WINDOW_4_LABELS = [
     { key: 'partners', text: 'Partners', x: 200, y: 84.239, compW: 400, compH: 300 },
-    { key: 'company', text: 'Nodespace', x: 309.3, y: 215.6, compW: 400, compH: 300 },
+    { key: 'company', text: 'Nodspace', x: 309.3, y: 215.6, compW: 400, compH: 300 },
     { key: 'project', text: 'Defi Strategies', x: 92.882, y: 215.588, compW: 400, compH: 300 },
+];
+const MAIN_TEXT_BY_LAYER = [
+    { layerName: 'text 1', text: 'Partners' },
+    { layerName: 'text 2', text: 'Nodspace' },
+    { layerName: 'text 3', text: 'WEB3' },
 ];
 const popupContainer = document.getElementById('popup-lottie');
 let popupAnim = null;
@@ -180,6 +185,53 @@ const getLayerElement = (anim, layerName) => {
     return match.layerElement || match.baseElement || match.element || match;
 };
 
+const renderMainLayerText = (anim) => {
+    const lottieRoot = document.getElementById('lottie');
+    if (!lottieRoot) return;
+
+    const oldLabels = lottieRoot.querySelector('.dna-main-labels');
+    if (oldLabels) oldLabels.remove();
+
+    const compW = anim?.animationData?.w || 1200;
+    const compH = anim?.animationData?.h || 800;
+    const layers = anim?.animationData?.layers || [];
+
+    lottieRoot.style.position = 'relative';
+
+    const labels = document.createElement('div');
+    labels.className = 'dna-main-labels';
+    labels.style.position = 'absolute';
+    labels.style.inset = '0';
+    labels.style.pointerEvents = 'none';
+    labels.style.zIndex = '4';
+
+    MAIN_TEXT_BY_LAYER.forEach(({ layerName, text }) => {
+        const layerData = layers.find((layer) => layer?.nm === layerName);
+        const coords = layerData?.ks?.p?.k;
+        if (!Array.isArray(coords) || coords.length < 2) return;
+        const [x, y] = coords;
+
+        const layerEl = getLayerElement(anim, layerName);
+        if (layerEl?.style) layerEl.style.opacity = '0';
+
+        const item = document.createElement('div');
+        item.textContent = text;
+        item.style.position = 'absolute';
+        item.style.left = `${(x / compW) * 100}%`;
+        item.style.top = `${(y / compH) * 100}%`;
+        item.style.transform = 'translate(-50%, -50%)';
+        item.style.fontFamily = 'Helvetica, Arial, sans-serif';
+        item.style.fontSize = '20px';
+        item.style.fontWeight = '600';
+        item.style.letterSpacing = '0.02em';
+        item.style.color = '#6668b3';
+        item.style.whiteSpace = 'nowrap';
+        labels.appendChild(item);
+    });
+
+    lottieRoot.appendChild(labels);
+};
+
 const handleLayerActivate = (layerName, event) => {
     if (layerName === 'circles-hover-4') {
         loadPopupAnimation('json/window-4.json');
@@ -224,6 +276,7 @@ mainAnim.addEventListener('DOMLoaded', () => {
     if (svgEl) {
         svgEl.style.pointerEvents = 'auto';
     }
+    renderMainLayerText(mainAnim);
 
     const hoverLayerNames = [
         'circles-hover-1',
